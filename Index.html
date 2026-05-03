@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>ReviewPro — India ka Smart Review Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+
+<style>
+:root {
+  --bg: #06060F;
+  --card: #0A0A1C;
+  --hi: #0D0D22;
+  --b: #171730;
+  --bh: #1C1C36;
+  --pr: #FF4500;
+  --pl: #FF6535;
+  --ac: #FFD700;
+  --ok: #00C48C;
+  --dn: #FF4444;
+  --wn: #FFB300;
+  --inf: #4D9EFF;
+  --tx: #E8E8FF;
+  --mu: #888899;
+  --fa: #40405A;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--tx);overflow-x:hidden;min-height:100vh}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--pr);border-radius:4px}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes popIn{0%{transform:scale(.72);opacity:0}70%{transform:scale(1.05)}100%{transform:scale(1);opacity:1}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+@keyframes glow{0%,100%{box-shadow:0 0 12px #FF450030}50%{box-shadow:0 0 30px #FF450070}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes slideIn{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
+
+.fu{animation:fadeUp .42s cubic-bezier(.22,1,.36,1) both}
+.fi{animation:fadeIn .3s ease both}
+.pi{animation:popIn .38s cubic-bezier(.34,1.56,.64,1) both}
+
+/* FORMS */
+input,select,textarea{
+  background:var(--hi);border:1.5px solid var(--bh);color:var(--tx);
+  padding:13px 15px;border-radius:11px;font-family:'DM Sans',sans-serif;
+  font-size:15px;width:100%;outline:none;
+  transition:border-color .2s,box-shadow .2s;-webkit-appearance:none;
+}
+input:focus,select:focus,textarea:focus{border-color:var(--pr);box-shadow:0 0 0 3px #FF450015}
+input::placeholder,textarea::placeholder{color:var(--fa)}
+select option{background:var(--hi)}
+label{font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:1.2px;display:block;margin-bottom:7px}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  font-family:'Syne',sans-serif;font-weight:700;cursor:pointer;border:none;
+  transition:all .2s;border-radius:11px;letter-spacing:.3px;text-decoration:none}
+.btn-p{background:linear-gradient(135deg,var(--pr),var(--pl));color:#fff;
+  padding:14px 22px;font-size:15px;width:100%;animation:glow 2.5s ease-in-out infinite}
+.btn-p:hover{transform:translateY(-2px);filter:brightness(1.08)}
+.btn-p:disabled{opacity:.5;cursor:not-allowed;animation:none}
+.btn-o{background:transparent;border:1.5px solid var(--bh);color:var(--mu);
+  padding:12px 20px;font-size:14px;width:100%}
+.btn-o:hover{border-color:var(--pr);color:var(--pr)}
+.btn-sm{padding:7px 13px;font-size:12px;border-radius:8px}
+.btn-ok{background:#00C48C20;color:#00C48C;border:1px solid #00C48C30}
+.btn-ok:hover{background:#00C48C;color:#fff}
+.btn-red{background:#FF444420;color:#FF4444;border:1px solid #FF444430}
+.btn-red:hover{background:#FF4444;color:#fff}
+.btn-wa{background:#25D36622;color:#25D366;border:1px solid #25D36630}
+.btn-wa:hover{background:#25D366;color:#fff}
+.btn-blue{background:#4D9EFF22;color:#4D9EFF;border:1px solid #4D9EFF30}
+.btn-blue:hover{background:#4D9EFF;color:#fff}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--b);border-radius:16px}
+.card2{background:var(--hi);border:1px solid var(--bh);border-radius:12px}
+.hov{transition:transform .2s,border-color .2s,box-shadow .2s}
+.hov:hover{transform:translateY(-2px);border-color:#FF450040!important;box-shadow:0 6px 26px #FF450012}
+
+/* BADGE */
+.bdg{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;
+  font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;white-space:nowrap}
+
+/* LAYOUT */
+.page{display:none;min-height:100vh;flex-direction:column}
+.page.active{display:flex}
+.center{align-items:center;justify-content:center}
+
+/* STICKY NAV */
+.nav{background:#0A0A1CEE;backdrop-filter:blur(14px);border-bottom:1px solid var(--b);
+  position:sticky;top:0;z-index:100;padding:0 16px;
+  display:flex;align-items:center;justify-content:space-between;height:58px}
+.logo-text{font-weight:900;font-size:17px;font-family:'Syne',sans-serif}
+.logo-r{color:var(--pr)}
+
+/* GRID */
+.stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media(min-width:560px){.stat-grid{grid-template-columns:repeat(4,1fr);gap:14px}}
+.two-col{display:grid;grid-template-columns:1fr;gap:14px}
+@media(min-width:640px){.two-col{grid-template-columns:1fr 1fr}}
+.client-row{display:flex;flex-direction:column;gap:10px}
+@media(min-width:620px){.client-row{display:grid;grid-template-columns:1fr 70px 150px 110px;align-items:center;gap:12px}}
+
+/* TABS */
+.tabs{display:flex;gap:3px;background:var(--hi);padding:4px;border-radius:12px}
+.tab{flex:1;padding:9px 10px;border-radius:9px;border:none;
+  font-family:'Syne',sans-serif;font-weight:700;font-size:12px;
+  cursor:pointer;transition:all .2s;color:var(--mu);background:transparent;white-space:nowrap}
+.tab.active{background:var(--pr);color:#fff}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:#000000AA;z-index:999;
+  display:none;align-items:flex-end;justify-content:center}
+.modal-overlay.open{display:flex;animation:fadeIn .2s ease}
+.modal-box{background:var(--card);border:1px solid var(--b);border-radius:22px 22px 0 0;
+  padding:24px 20px 40px;width:100%;max-width:500px;max-height:92vh;
+  overflow-y:auto;animation:slideIn .3s cubic-bezier(.22,1,.36,1)}
+.modal-handle{width:36px;height:4px;background:var(--bh);border-radius:2px;margin:0 auto 18px}
+
+/* SPINNER */
+.spin{display:inline-block;width:16px;height:16px;border:2px solid #fff4;
+  border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
+
+/* STARS */
+.stars{display:inline-flex;gap:3px}
+.star{font-size:15px;color:var(--b);cursor:default;transition:color .12s,transform .12s;display:inline-block}
+.star.lit{color:var(--ac)}
+.star.interactive{cursor:pointer}
+.star.interactive:hover,.star.interactive.lit{transform:scale(1.2)}
+
+/* TOAST */
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);
+  background:var(--ok);color:#fff;padding:12px 24px;border-radius:50px;
+  font-weight:700;font-size:13px;z-index:9999;opacity:0;
+  transition:opacity .3s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1}
+
+/* SCROLL TABLE */
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+/* FOOTER */
+.footer{text-align:center;padding:24px 16px 20px;border-top:1px solid var(--b);margin-top:28px;
+  display:flex;flex-direction:column;align-items:center;gap:8px}
+
+/* PLAN CARD */
+.plan-card{background:var(--hi);border:1.5px solid var(--bh);border-radius:12px;
+  padding:12px 14px;cursor:pointer;transition:all .2s;position:relative}
+.plan-card.selected{background:#FF450012;border-color:var(--pr)}
+.plan-card:hover{border-color:var(--pr)}
+
+/* LOADING SCREEN */
+#loading-screen{position:fixed;inset:0;background:var(--bg);z-index:9998;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
+
+/* QR Container */
+#qr-canvas-container canvas{border-radius:12px}
+
+/* AI text */
+.ai-word{display:inline-block;animation:fadeIn .08s ease both}
+
+/* Notification dot */
+.notif-dot{width:8px;height:8px;background:var(--dn);border-radius:50%;
+  display:inline-block;animation:glow 1.5s ease-in-out infinite;vertical-align:middle}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loading-screen">
+  <div style="background:linear-gradient(135deg,#FF4500,#FF6535);width:64px;height:64px;border-radius:17px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:30px;color:white;font-family:'Syne',sans-serif;animation:bob 2s ease-in-out infinite">R</div>
+  <div style="font-family:'Syne',sans-serif;font-weight:900;font-size:22px"><span style="color:#FF4500">Review</span>Pro</div>
+  <div class="spin" style="border-color:#FF450033;border-top-color:#FF4500;width:24px;height:24px"></div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- ═══════════════════════════════════════
+     PAGE: LOGIN
+═══════════════════════════════════════ -->
+<div class="page center" id="page-login" style="padding:20px 16px;flex-direction:column">
+  <div style="position:fixed;top:8%;left:-10%;width:280px;height:280px;background:radial-gradient(#FF450009,transparent 70%);animation:bob 7s ease-in-out infinite;pointer-events:none"></div>
+  <div style="position:fixed;bottom:8%;right:-10%;width:240px;height:240px;background:radial-gradient(#4D9EFF08,transparent 70%);animation:bob 9s ease-in-out infinite reverse;pointer-events:none"></div>
+
+  <div class="card fu" style="padding:32px 22px;width:100%;max-width:400px;position:relative;z-index:1">
+    <div style="text-align:center;margin-bottom:26px">
+      <div style="background:linear-gradient(135deg,#FF4500,#FF6535);width:64px;height:64px;border-radius:17px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-weight:900;font-size:30px;color:white;font-family:'Syne',sans-serif;box-shadow:0 10px 30px #FF450044;animation:bob 4s ease-in-out infinite">R</div>
+      <div style="font-size:28px;font-weight:900;font-family:'Syne',sans-serif;letter-spacing:-1px"><span style="color:#FF4500">Review</span>Pro</div>
+      <div style="color:var(--mu);font-size:12px;margin-top:5px;font-style:italic">India ka Smart Review Platform 🇮🇳</div>
+    </div>
+
+    <div class="tabs" style="margin-bottom:20px" id="login-tabs">
+      <button class="tab active" onclick="setLoginMode('admin')">🔐 Admin</button>
+      <button class="tab" onclick="setLoginMode('client')">🏪 Shop Owner</button>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:13px">
+      <div><label>Email Address</label><input type="email" id="login-email" placeholder="Email daalo"/></div>
+      <div><label>Password</label><input type="password" id="login-pass" placeholder="Password daalo" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+      <div id="login-err" style="display:none;background:#FF444414;border:1px solid #FF444425;color:#FF4444;padding:10px 13px;border-radius:9px;font-size:12px"></div>
+      <button class="btn btn-p" style="margin-top:4px" onclick="doLogin()" id="login-btn">Login Karein →</button>
+    </div>
+
+    <div id="register-link" style="margin-top:15px;text-align:center;display:none">
+      <div style="color:var(--fa);font-size:11px;margin-bottom:7px">Pehli baar aa rahe ho?</div>
+      <button class="btn btn-o" style="font-size:13px" onclick="showPage('page-register')">🚀 Free Account Banayein (30 din FREE)</button>
+    </div>
+
+    <div style="margin-top:15px;padding:12px;background:var(--hi);border:1px dashed var(--b);border-radius:10px">
+      <div style="font-size:10px;color:var(--fa);line-height:1.9">
+        <strong style="color:var(--mu);display:block;margin-bottom:2px">Demo Login:</strong>
+        Admin: ronak@reviewpro.app / Ronak@2025<br/>
+        Client: sharma@reviewpro.app / Client@2025
+      </div>
+    </div>
+  </div>
+  <div id="login-footer"></div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     PAGE: REGISTER (Client Self)
+═══════════════════════════════════════ -->
+<div class="page" id="page-register" style="padding:20px 16px;flex-direction:column;align-items:center;justify-content:center">
+  <div class="card fu" style="padding:28px 22px;width:100%;max-width:440px">
+    <div style="text-align:center;margin-bottom:20px">
+      <div style="background:linear-gradient(135deg,#FF4500,#FF6535);width:50px;height:50px;border-radius:13px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-weight:900;font-size:22px;color:white;font-family:'Syne',sans-serif">R</div>
+      <div style="font-weight:900;font-size:20px;font-family:'Syne',sans-serif"><span style="color:#FF4500">Review</span>Pro</div>
+      <div style="font-size:11px;color:var(--mu);margin-top:4px">30 din FREE mein start karein!</div>
+    </div>
+
+    <div id="reg-step1">
+      <!-- Plan Selection -->
+      <div style="margin-bottom:14px">
+        <label>Plan Chuniye</label>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div class="plan-card" id="plan-Basic" onclick="selectPlan('Basic')">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">
+              <span style="font-weight:800;font-size:14px;font-family:'Syne',sans-serif">Basic</span>
+              <span style="font-weight:800;font-size:14px;color:var(--mu)">₹333<span style="font-size:10px;font-weight:400">/mo</span></span>
+            </div>
+            <div style="font-size:11px;color:var(--mu)">QR Code + Dashboard + 100 reviews/month</div>
+          </div>
+          <div class="plan-card selected" id="plan-Standard" onclick="selectPlan('Standard')" style="border-color:var(--pr)">
+            <div style="position:absolute;top:-8px;right:12px;background:var(--pr);color:white;font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;letter-spacing:.5px">POPULAR</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">
+              <span style="font-weight:800;font-size:14px;font-family:'Syne',sans-serif;color:var(--pr)">Standard</span>
+              <span style="font-weight:800;font-size:14px;color:var(--pr)">₹555<span style="font-size:10px;font-weight:400">/mo</span></span>
+            </div>
+            <div style="font-size:11px;color:var(--mu)">Unlimited + Google link + AI tips ⭐</div>
+          </div>
+          <div class="plan-card" id="plan-Premium" onclick="selectPlan('Premium')">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">
+              <span style="font-weight:800;font-size:14px;font-family:'Syne',sans-serif">Premium</span>
+              <span style="font-weight:800;font-size:14px;color:var(--ac)">₹999<span style="font-size:10px;font-weight:400">/mo</span></span>
+            </div>
+            <div style="font-size:11px;color:var(--mu)">Custom branding + 3 branches + PDF reports</div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-bottom:13px"><label>Shop Ka Naam *</label><input id="reg-shop" placeholder="Sharma Medical Store"/></div>
+      <div style="margin-bottom:13px"><label>Owner Ka Naam *</label><input id="reg-owner" placeholder="Aapka poora naam"/></div>
+      <div style="margin-bottom:13px"><label>Business Type</label>
+        <select id="reg-type">
+          <option>Medical Store</option><option>Beauty Salon</option>
+          <option>Restaurant / Dhaba</option><option>Clinic / Doctor</option>
+          <option>Coaching Centre</option><option>General Store</option>
+          <option>Gym / Fitness</option><option>Other</option>
+        </select>
+      </div>
+      <div style="margin-bottom:16px"><label>City</label><input id="reg-city" placeholder="Jaipur, Delhi..."/></div>
+      <button class="btn btn-p" onclick="regStep2()">Aage Badho →</button>
+      <button class="btn btn-o" style="margin-top:9px" onclick="showPage('page-login')">← Login Pe Jaiye</button>
+    </div>
+
+    <div id="reg-step2" style="display:none">
+      <div style="background:#FF450012;border:1px solid #FF450025;border-radius:9px;padding:9px 12px;margin-bottom:14px;font-size:11px;color:var(--mu)">
+        Plan: <strong id="reg-plan-show" style="color:var(--pr)"></strong> · <strong style="color:var(--ok)">30 din FREE</strong>
+      </div>
+      <div style="margin-bottom:13px"><label>Mobile Number *</label><input id="reg-phone" type="tel" placeholder="9812345678"/></div>
+      <div style="margin-bottom:16px"><label>Email Address *</label><input id="reg-email" type="email" placeholder="aapka@email.com"/></div>
+      <div style="margin-bottom:16px"><label>Password Banao *</label><input id="reg-password" type="password" placeholder="Minimum 6 characters"/></div>
+      <div id="reg-err" style="display:none;background:#FF444414;border:1px solid #FF444425;color:#FF4444;padding:10px 13px;border-radius:9px;font-size:12px;margin-bottom:12px"></div>
+      <div style="display:flex;gap:9px">
+        <button class="btn btn-o" style="flex:0 0 auto;width:auto;padding:12px 16px" onclick="document.getElementById('reg-step1').style.display='';document.getElementById('reg-step2').style.display='none'">←</button>
+        <button class="btn btn-p" onclick="doRegister()" id="reg-btn">🚀 Free Account Banayein</button>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:13px;font-size:11px;color:var(--fa);text-align:center">
+    Sawaal? Call karein: <span style="color:var(--pr);font-weight:700">+91 73397 23971</span> (Ronak)
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     PAGE: REVIEW FORM (Customer)
+═══════════════════════════════════════ -->
+<div class="page" id="page-review" style="flex-direction:column;align-items:center;justify-content:center;padding:20px 16px">
+  <div class="card fu" style="padding:28px 22px;width:100%;max-width:400px;position:relative;z-index:1">
+    <div style="text-align:center;margin-bottom:20px">
+      <div style="background:linear-gradient(135deg,#FF4500,#FF6535);width:50px;height:50px;border-radius:13px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:22px;box-shadow:0 6px 20px #FF450044">⭐</div>
+      <div style="font-weight:900;font-size:20px;font-family:'Syne',sans-serif"><span style="color:#FF4500">Review</span>Pro</div>
+      <div id="review-shop-name" style="color:var(--mu);font-size:12px;background:var(--hi);display:inline-block;padding:3px 12px;border-radius:20px;margin-top:5px"></div>
+    </div>
+
+    <!-- Step 1: Rating -->
+    <div id="review-step1">
+      <p style="text-align:center;color:var(--mu);font-size:13px;margin-bottom:12px">Aapka anubhav kaisa raha? Star pe tap karein 👇</p>
+      <div style="display:flex;justify-content:space-between;margin-bottom:5px;padding:0 2px">
+        <div style="text-align:center;flex:1;font-size:9px;font-weight:700;color:var(--dn)" id="lbl-1">Bad</div>
+        <div style="text-align:center;flex:1;font-size:9px;font-weight:700;color:#FF6B35" id="lbl-2">Poor</div>
+        <div style="text-align:center;flex:1;font-size:9px;font-weight:700;color:var(--wn)" id="lbl-3">Average</div>
+        <div style="text-align:center;flex:1;font-size:9px;font-weight:700;color:var(--ok)" id="lbl-4">Good</div>
+        <div style="text-align:center;flex:1;font-size:9px;font-weight:700;color:var(--ac)" id="lbl-5">Excellent</div>
+      </div>
+      <div class="stars" style="justify-content:center;margin-bottom:14px;gap:8px" id="review-stars">
+        <span class="star interactive" style="font-size:40px" onclick="setRating(1)" id="s1">★</span>
+        <span class="star interactive" style="font-size:40px" onclick="setRating(2)" id="s2">★</span>
+        <span class="star interactive" style="font-size:40px" onclick="setRating(3)" id="s3">★</span>
+        <span class="star interactive" style="font-size:40px" onclick="setRating(4)" id="s4">★</span>
+        <span class="star interactive" style="font-size:40px" onclick="setRating(5)" id="s5">★</span>
+      </div>
+      <div id="rating-feedback" style="min-height:72px;display:flex;align-items:center;justify-content:center;margin-bottom:16px">
+        <div style="color:var(--fa);font-size:12px">☝️ Koi bhi star pe tap karein</div>
+      </div>
+      <button class="btn btn-p" id="review-next-btn" style="opacity:.4" onclick="reviewStep2()">Aage Badho →</button>
+    </div>
+
+    <!-- Step 2: Details -->
+    <div id="review-step2" style="display:none">
+      <div style="margin-bottom:14px"><label>Aapka Naam (optional)</label><input id="review-name" placeholder="Jaise: Rahul Kumar..."/></div>
+      <div style="margin-bottom:18px"><label>Apna Anubhav Batayein (optional)</label><textarea id="review-comment" placeholder="Kya achha laga? Kya improve ho sakta hai?..." rows="4" style="resize:none"></textarea></div>
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-o" style="flex:0 0 auto;width:auto;padding:12px 16px" onclick="document.getElementById('review-step1').style.display='';document.getElementById('review-step2').style.display='none'">←</button>
+        <button class="btn btn-p" onclick="submitReview()" id="review-submit-btn">Submit Karein ✓</button>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:13px;font-size:10px;color:var(--fa)">Powered by <span style="color:#FF4500;font-weight:700">ReviewPro</span></div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     PAGE: REVIEW SUCCESS
+═══════════════════════════════════════ -->
+<div class="page" id="page-review-done" style="flex-direction:column;align-items:center;padding:24px 16px;gap:16px">
+  <div class="card pi" style="padding:30px 22px;width:100%;max-width:420px;text-align:center">
+    <div style="font-size:54px;margin-bottom:12px;animation:bob 3s ease-in-out infinite">🎉</div>
+    <h2 style="font-weight:900;font-size:22px;font-family:'Syne',sans-serif;margin-bottom:8px">Shukriya!</h2>
+    <p style="color:var(--mu);font-size:13px;line-height:1.7;margin-bottom:14px">Aapka review <strong id="done-shop-name" style="color:var(--tx)"></strong> ko mil gaya.<br/>Dil se dhanyawad! 🙏</p>
+    <div id="done-stars" style="display:flex;justify-content:center;gap:3px;margin-bottom:10px"></div>
+    <p style="font-size:10px;color:var(--fa)">Powered by <span style="color:#FF4500;font-weight:700">ReviewPro</span></p>
+  </div>
+
+  <!-- AI Tips -->
+  <div style="width:100%;max-width:420px">
+    <div style="background:#4D9EFF14;border:1px solid #4D9EFF25;border-radius:13px;padding:14px 16px;margin-bottom:12px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;flex-wrap:wrap">
+        <span style="font-size:15px">🤖</span>
+        <span style="font-weight:800;font-size:13px;color:#4D9EFF;font-family:'Syne',sans-serif">AI Business Coach</span>
+        <span id="ai-rating-badge" class="bdg"></span>
+      </div>
+      <p style="font-size:11px;color:var(--mu);line-height:1.5">Is review ke baad yeh steps lo business grow karne ke liye:</p>
+    </div>
+    <div id="ai-tips-box" style="background:var(--hi);border:1px solid var(--b);border-radius:12px;padding:14px 16px;font-size:13px;line-height:1.9;color:var(--tx);min-height:80px">
+      <div class="spin" style="border-color:#FF450033;border-top-color:#FF4500;margin:10px auto"></div>
+    </div>
+  </div>
+
+  <!-- ReviewPro Promo -->
+  <div style="width:100%;max-width:420px;background:linear-gradient(135deg,#FF450020,var(--hi));border:1.5px solid #FF450044;border-radius:16px;padding:18px 16px">
+    <div style="display:flex;align-items:center;gap:9px;margin-bottom:12px">
+      <div style="background:linear-gradient(135deg,#FF4500,#FF6535);width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:17px;color:white;font-family:'Syne',sans-serif">R</div>
+      <div>
+        <div style="font-weight:800;font-size:14px;font-family:'Syne',sans-serif"><span style="color:#FF4500">Review</span>Pro</div>
+        <div style="font-size:10px;color:var(--mu)">Aapke business ke liye bhi! 🚀</div>
+      </div>
+    </div>
+    <p style="font-size:12px;color:var(--tx);line-height:1.7;margin-bottom:12px"><strong style="color:var(--ac)">Kya aapka bhi business hai?</strong><br/>Aap bhi aise hi reviews collect kar sakte hain! 📈</p>
+    <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:13px">
+      <div style="display:flex;align-items:center;gap:8px"><span style="font-size:14px">📱</span><span style="font-size:11px;color:var(--mu)">QR Code se instant review collection</span></div>
+      <div style="display:flex;align-items:center;gap:8px"><span style="font-size:14px">🤖</span><span style="font-size:11px;color:var(--mu)">AI tips har review ke baad</span></div>
+      <div style="display:flex;align-items:center;gap:8px"><span style="font-size:14px">📊</span><span style="font-size:11px;color:var(--mu)">Real-time dashboard</span></div>
+    </div>
+    <div style="background:var(--card);border:1px solid var(--b);border-radius:10px;padding:11px 14px;display:flex;align-items:center;gap:9px;margin-bottom:10px">
+      <span style="font-size:18px">📞</span>
+      <div>
+        <div style="font-size:9px;color:var(--mu);margin-bottom:2px">Ronak Choudhary se contact karein</div>
+        <div style="font-weight:800;font-size:15px;color:#FF4500">+91 73397 23971</div>
+      </div>
+    </div>
+    <div style="text-align:center;padding:8px;border-radius:8px;background:#FF450014;border:1px dashed #FF450030">
+      <span style="font-size:11px;color:#FF4500;font-weight:700">🎁 Pehla mahina sirf ₹333! Abhi call karein.</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     PAGE: CLIENT DASHBOARD
+═══════════════════════════════════════ -->
+<div class="page" id="page-client" style="flex-direction:column">
+  <div class="nav">
+    <div style="display:flex;align-items:center;gap:10px">
+      <button class="btn btn-sm" style="background:var(--hi);border:none;color:var(--mu);width:32px;height:32px;border-radius:9px;padding:0" onclick="logout()">←</button>
+      <div class="logo-text"><span class="logo-r">Review</span>Pro</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span id="client-plan-badge" class="bdg"></span>
+      <button class="btn btn-sm btn-blue" onclick="showQRModal()">📱 QR</button>
+    </div>
+  </div>
+  <div style="padding:16px;max-width:780px;margin:0 auto;width:100%">
+    <div id="client-overdue-alert" style="display:none;background:#FF444410;border:1px solid #FF444428;border-radius:11px;padding:11px 14px;margin-bottom:14px;display:none">
+      <span style="font-size:15px">⚠️</span>
+      <div style="margin-left:9px;display:inline-block"><div style="color:var(--dn);font-weight:700;font-size:12px">Payment Due Ho Gayi!</div><div style="color:var(--mu);font-size:11px">Ronak se contact karein: +91 73397 23971</div></div>
+    </div>
+
+    <div class="fu" style="background:linear-gradient(135deg,#FF450016,var(--card));border:1px solid #FF450025;border-radius:15px;padding:16px;margin-bottom:16px">
+      <div style="font-weight:800;font-size:17px;font-family:'Syne',sans-serif;margin-bottom:3px">Namaste, <span id="client-owner-name"></span>! 👋</div>
+      <div style="color:var(--mu);font-size:11px"><span id="client-shop-name-dash"></span></div>
+    </div>
+
+    <div class="stat-grid" style="margin-bottom:16px" id="client-stats"></div>
+
+    <div class="tabs" style="margin-bottom:14px" id="client-tabs">
+      <button class="tab active" onclick="clientTab('reviews')">💬 Reviews</button>
+      <button class="tab" onclick="clientTab('breakdown')">📊 Breakdown</button>
+    </div>
+
+    <div id="client-reviews-tab"></div>
+    <div id="client-breakdown-tab" style="display:none"></div>
+  </div>
+  <div id="client-footer"></div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     PAGE: ADMIN PANEL
+═══════════════════════════════════════ -->
+<div class="page" id="page-admin" style="flex-direction:column">
+  <div class="nav">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="background:linear-gradient(135deg,#FF4500,#FF6535);width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:15px;color:white;font-family:'Syne',sans-serif">R</div>
+      <div>
+        <div class="logo-text" style="font-size:15px;line-height:1"><span class="logo-r">Review</span>Pro</div>
+        <div style="font-size:8px;color:var(--pr);font-weight:700;letter-spacing:2px;text-transform:uppercase">SUPER ADMIN</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-sm btn-blue" onclick="showPage('page-review');loadReviewForm(adminClients[0])">📱 Preview</button>
+      <button class="btn btn-sm btn-red" onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <div style="padding:16px;max-width:1100px;margin:0 auto;width:100%">
+    <div class="stat-grid" style="margin-bottom:16px" id="admin-stats"></div>
+
+    <div class="tabs" style="margin-bottom:16px" id="admin-tabs">
+      <button class="tab active" onclick="adminTab('clients')">Clients</button>
+      <button class="tab" onclick="adminTab('payments')">Payments</button>
+      <button class="tab" onclick="adminTab('analytics')">Analytics</button>
+      <button class="tab" onclick="adminTab('alerts')">🚨 Alerts</button>
+    </div>
+
+    <div id="admin-clients-tab">
+      <div style="display:flex;gap:9px;margin-bottom:13px;flex-wrap:wrap">
+        <input placeholder="🔍 Search client ya shop..." id="admin-search" oninput="renderClients()" style="flex:1 1 180px"/>
+        <button class="btn btn-p btn-sm" style="width:auto;animation:none;padding:11px 18px" onclick="openAddModal()">+ Add Client</button>
+      </div>
+      <div id="admin-clients-list" style="display:flex;flex-direction:column;gap:10px"></div>
+    </div>
+    <div id="admin-payments-tab" style="display:none"></div>
+    <div id="admin-analytics-tab" style="display:none"></div>
+    <div id="admin-alerts-tab" style="display:none"></div>
+  </div>
+  <div id="admin-footer"></div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     MODALS
+═══════════════════════════════════════ -->
+
+<!-- QR Modal -->
+<div class="modal-overlay" id="qr-modal" onclick="closeModal('qr-modal')">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+      <h2 style="font-family:'Syne',sans-serif;font-weight:800;font-size:17px">Branded QR Code</h2>
+      <button onclick="closeModal('qr-modal')" class="btn" style="background:var(--hi);border:none;color:var(--mu);width:30px;height:30px;border-radius:50%;padding:0">✕</button>
+    </div>
+    <div style="text-align:center">
+      <!-- Branded QR Card -->
+      <div id="qr-card-wrap" style="display:inline-block;background:linear-gradient(145deg,#08081C,#110804);border:1.5px solid #FF450055;border-radius:18px;padding:20px 18px 16px;position:relative;overflow:hidden;box-shadow:0 0 36px #FF450020;margin-bottom:16px">
+        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#FF4500,#FFD700,#FF4500,transparent)"></div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:7px;margin-bottom:14px">
+          <div style="background:linear-gradient(135deg,#FF4500,#FF6535);width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px;color:white;font-family:'Syne',sans-serif">R</div>
+          <span style="font-weight:900;font-size:14px;font-family:'Syne',sans-serif"><span style="color:#FF4500">Review</span><span style="color:#E8E8FF">Pro</span></span>
+        </div>
+        <div id="qr-canvas-container" style="background:white;border-radius:12px;padding:12px;margin-bottom:12px;display:inline-block"></div>
+        <div id="qr-shop-badge" style="background:#FF450018;border:1px solid #FF450030;border-radius:8px;padding:6px 10px;margin-bottom:7px">
+          <div style="font-size:9px;color:#888899;letter-spacing:1px;text-transform:uppercase;margin-bottom:2px">Scan & Review Dijiye</div>
+          <div id="qr-shop-name-label" style="font-weight:800;font-size:13px;font-family:'Syne',sans-serif;color:#E8E8FF"></div>
+        </div>
+        <div id="qr-link-label" style="font-size:9px;color:#FF4500;font-weight:600;letter-spacing:.4px;margin-bottom:5px"></div>
+        <div style="font-size:12px;letter-spacing:3px;color:#FFD700">★★★★★</div>
+        <div style="position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#FFD700,#FF4500,transparent)"></div>
+      </div>
+      <p style="color:var(--mu);font-size:12px;margin-bottom:16px;line-height:1.6">Print karke counter pe lagaiye.<br/>Customer scan kare → review form khule!</p>
+      <button class="btn btn-p" style="margin-bottom:10px" onclick="downloadQR()">⬇ Download QR Card</button>
+      <button class="btn btn-o" onclick="closeModal('qr-modal')">Band Karein</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Client Modal -->
+<div class="modal-overlay" id="add-modal" onclick="closeModal('add-modal')">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+      <h2 style="font-family:'Syne',sans-serif;font-weight:800;font-size:17px">Naya Client Add Karein</h2>
+      <button onclick="closeModal('add-modal')" class="btn" style="background:var(--hi);border:none;color:var(--mu);width:30px;height:30px;border-radius:50%;padding:0">✕</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div><label>Shop Name *</label><input id="add-shop" placeholder="Sharma Medical Store"/></div>
+      <div><label>Owner Name</label><input id="add-owner" placeholder="Rakesh Sharma"/></div>
+      <div><label>Phone *</label><input id="add-phone" type="tel" placeholder="9812345678"/></div>
+      <div><label>Email *</label><input id="add-email" type="email" placeholder="sharma@gmail.com"/></div>
+      <div><label>Plan</label>
+        <select id="add-plan">
+          <option value="Basic">Basic — ₹333/month</option>
+          <option value="Standard" selected>Standard — ₹555/month</option>
+          <option value="Premium">Premium — ₹999/month</option>
+        </select>
+      </div>
+      <div id="add-err" style="display:none;background:#FF444414;border:1px solid #FF444425;color:#FF4444;padding:10px 13px;border-radius:9px;font-size:12px"></div>
+      <button class="btn btn-p" style="margin-top:5px" onclick="doAddClient()" id="add-btn">✓ Account Banao + WA Message Ready</button>
+      <button class="btn btn-o" onclick="closeModal('add-modal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- WA Message Modal -->
+<div class="modal-overlay" id="wa-modal" onclick="closeModal('wa-modal')">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+      <h2 style="font-family:'Syne',sans-serif;font-weight:800;font-size:17px" id="wa-modal-title">WhatsApp Message</h2>
+      <button onclick="closeModal('wa-modal')" class="btn" style="background:var(--hi);border:none;color:var(--mu);width:30px;height:30px;border-radius:50%;padding:0">✕</button>
+    </div>
+    <div id="wa-msg-box" style="background:var(--hi);border:1px solid var(--b);border-radius:10px;padding:13px;font-size:11px;color:var(--mu);line-height:1.9;white-space:pre-wrap;max-height:220px;overflow-y:auto;margin-bottom:12px;font-family:'DM Sans',sans-serif"></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-sm btn-wa" style="flex:1;padding:11px" id="wa-send-btn">📱 WhatsApp pe Bhejo</button>
+      <button class="btn btn-sm btn-o" style="flex:0 0 auto;width:auto;padding:11px 14px" onclick="copyWA()">📋 Copy</button>
+    </div>
+    <button class="btn btn-o" style="margin-top:10px" onclick="closeModal('wa-modal')">Band Karein</button>
+  </div>
+</div>
+
+<!-- Delete Confirm Modal -->
+<div class="modal-overlay" id="del-modal" onclick="closeModal('del-modal')">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <h2 style="font-family:'Syne',sans-serif;font-weight:800;font-size:17px;margin-bottom:14px">Client Delete Karein?</h2>
+    <p style="font-size:13px;color:var(--mu);margin-bottom:18px;line-height:1.6">Kya aap <strong id="del-name" style="color:var(--tx)"></strong> ko permanently delete karna chahte hain?<br/><span style="color:var(--dn);font-size:12px">⚠️ Yeh action undo nahi hoga!</span></p>
+    <div style="display:flex;gap:9px">
+      <button class="btn btn-sm btn-red" style="flex:1;padding:13px" id="del-confirm-btn">🗑 Haan Delete Karo</button>
+      <button class="btn btn-o" style="flex:1" onclick="closeModal('del-modal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     FIREBASE + APP LOGIC
+═══════════════════════════════════════ -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, collection, doc, addDoc, setDoc, getDoc, getDocs, updateDoc, deleteDoc, onSnapshot, query, orderBy, serverTimestamp, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+// ── FIREBASE CONFIG (Ronak's) ──────────────────────────────────
+const firebaseConfig = {
+  apiKey: "AIzaSyBYuF59_XthlZkyUGZPPR7g3Cwcnt6rhI4",
+  authDomain: "reviewpro-app-1cda8.firebaseapp.com",
+  projectId: "reviewpro-app-1cda8",
+  storageBucket: "reviewpro-app-1cda8.firebasestorage.app",
+  messagingSenderId: "13074003260",
+  appId: "1:13074003260:web:d185dbcd672accfc00da39"
+};
+
+const app   = initializeApp(firebaseConfig);
+const auth  = getAuth(app);
+const db    = getFirestore(app);
+
+// ── CONSTANTS ──────────────────────────────────────────────────
+const ADMIN_EMAIL = "ronak@reviewpro.app";
+const ADMIN_PASS  = "Ronak@2025";
+const PA = { Basic:333, Standard:555, Premium:999 };
+const PC = { Basic:"#888899", Standard:"#FF4500", Premium:"#FFD700" };
+const SMETA = {
+  "5":{label:"Excellent",sub:"Zabardast! 🤩",color:"#FFD700",emoji:"🏆"},
+  "4":{label:"Good",sub:"Achha tha! 😊",color:"#00C48C",emoji:"👍"},
+  "3":{label:"Average",sub:"Theek tha 😐",color:"#FFB300",emoji:"😐"},
+  "2":{label:"Poor",sub:"Kharaab 😕",color:"#FF6B35",emoji:"😞"},
+  "1":{label:"Bad",sub:"Bahut Bura 😤",color:"#FF4444",emoji:"💔"},
+};
+const FALLBACK_TIPS = {
+  "5":"🎁 Loyalty card shuru karein — 10 visits pe free service!\n📱 Google My Business pe reply do — boost milega!\n🤝 Customer ko Brand Ambassador banao — refer pe discount!\n📸 5-Star poster counter pe lagao — trust badhega!",
+  "4":"💬 Poochho kya aur better ho sakta tha — valuable feedback!\n⭐ Next visit pe extra attention do — 4-star ko 5-star banao!\n🎯 Service time 10 min kam karo — experience improve hoga!\n📋 Daily staff briefing karo — consistency zaroori hai!",
+  "3":"🔧 Team se baat karo — kya miss ho raha hai find karo!\n📞 Customer ko personally WhatsApp karo aur poochho!\n🎁 Next visit pe 20% discount do — loyalty banao!\n📊 Weekly meeting shuru karo — gaps identify karo!",
+  "2":"🚨 Owner personally aaj contact kare — urgent hai!\n💰 Free service offer karo next visit pe!\n📝 Root cause dhundho — pattern dekho!\n🔄 Customer journey map banao — pain point fix karo!",
+  "1":"🆘 URGENT: Owner aaj hi call kare — resolve karo!\n🛡️ Google pe professionally respond karo!\n💼 Emergency team meeting — overhaul karo!\n🎯 VIP treatment plus free service offer karo!",
+};
+
+// ── GLOBALS ────────────────────────────────────────────────────
+window.adminClients = [];
+window.currentClientData = null;
+window.currentReviewRating = 0;
+window.currentReviewClientId = null;
+window.currentWAClient = null;
+window.currentDelId = null;
+window.currentSelectedPlan = "Standard";
+window.waMessage = "";
+
+// ── HELPERS ────────────────────────────────────────────────────
+const uid  = () => Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+const slug = s  => s.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+const now  = ()  => new Date().toISOString().split("T")[0];
+const addD = (d,n) => { const dt=new Date(d); dt.setDate(dt.getDate()+n); return dt.toISOString().split("T")[0]; };
+const over = d   => new Date(d) < new Date();
+const avgR = rs  => rs?.length ? (rs.reduce((a,r)=>a+r.rating,0)/rs.length).toFixed(1) : "0.0";
+
+function toast(msg, color="#00C48C") {
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.style.background = color;
+  t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"), 2500);
+}
+
+function stars(rating, size=14) {
+  return [1,2,3,4,5].map(s=>`<span style="font-size:${size}px;color:${s<=rating?"#FFD700":"#171730"}"">★</span>`).join("");
+}
+
+function badge(label, color) {
+  return `<span class="bdg" style="background:${color}22;color:${color};border:1px solid ${color}30">${label}</span>`;
+}
+
+function footer() {
+  return `<div class="footer">
+    <div style="display:inline-flex;align-items:center;gap:7px;background:var(--card);border:1px solid var(--b);border-radius:50px;padding:7px 16px;flex-wrap:wrap;justify-content:center">
+      <span>🇮🇳</span><span style="font-size:12px;color:var(--mu)">Made with</span><span>❤️</span><span style="font-size:12px;color:var(--mu)">by</span>
+      <span style="font-weight:900;color:#FF4500;font-size:14px;font-family:'Syne',sans-serif">India</span>
+    </div>
+    <div style="display:inline-flex;align-items:center;gap:7px;background:var(--hi);border:1px solid var(--b);border-radius:9px;padding:6px 14px;flex-wrap:wrap;justify-content:center">
+      <span style="font-size:12px">👨‍💻</span>
+      <span style="font-size:12px;font-weight:700;color:var(--tx)">Ronak Choudhary</span>
+      <span style="color:var(--b)">|</span>
+      <span style="font-size:12px;color:#FF4500;font-weight:600">📞 +91 73397 23971</span>
+    </div>
+    <div style="font-size:10px;color:var(--fa)">© 2025 ReviewPro · Powered by AI 🤖</div>
+  </div>`;
+}
+
+// ── PAGES ──────────────────────────────────────────────────────
+window.showPage = (id) => {
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  window.scrollTo(0,0);
+};
+
+// ── LOGIN MODE ─────────────────────────────────────────────────
+window.loginMode = "admin";
+window.setLoginMode = (mode) => {
+  window.loginMode = mode;
+  document.querySelectorAll("#login-tabs .tab").forEach((t,i)=>{
+    t.classList.toggle("active", (i===0&&mode==="admin")||(i===1&&mode==="client"));
+  });
+  document.getElementById("register-link").style.display = mode==="client" ? "block" : "none";
+  document.getElementById("login-email").placeholder = mode==="admin" ? "ronak@reviewpro.app" : "aapka@email.com";
+  document.getElementById("login-pass").placeholder = mode==="admin" ? "Ronak@2025" : "Aapka password";
+};
+
+// ── LOGIN ──────────────────────────────────────────────────────
+window.doLogin = async () => {
+  const email = document.getElementById("login-email").value.trim();
+  const pass  = document.getElementById("login-pass").value;
+  const btn   = document.getElementById("login-btn");
+  const err   = document.getElementById("login-err");
+  err.style.display = "none";
+  if(!email||!pass){ err.textContent="Email aur password daalo!"; err.style.display="block"; return; }
+  btn.innerHTML = '<span class="spin"></span> Verify ho raha hai...';
+  btn.disabled = true;
+  try {
+    const cred = await signInWithEmailAndPassword(auth, email, pass);
+    const user = cred.user;
+    if(email === ADMIN_EMAIL) {
+      await loadAdminPanel();
+    } else {
+      await loadClientDash(user.uid);
+    }
+  } catch(e) {
+    err.textContent = "Email ya password galat hai. Try again!";
+    err.style.display = "block";
+  }
+  btn.innerHTML = "Login Karein →"; btn.disabled = false;
+};
+
+// ── REGISTER ──────────────────────────────────────────────────
+window.selectPlan = (plan) => {
+  window.currentSelectedPlan = plan;
+  ["Basic","Standard","Premium"].forEach(p=>{
+    const el = document.getElementById("plan-"+p);
+    el.classList.toggle("selected", p===plan);
+    el.style.borderColor = p===plan ? "var(--pr)" : "var(--bh)";
+    el.querySelector("span").style.color = p===plan ? "var(--pr)" : "";
+  });
+};
+
+window.regStep2 = () => {
+  const shop = document.getElementById("reg-shop").value.trim();
+  const owner = document.getElementById("reg-owner").value.trim();
+  if(!shop||!owner){ toast("Shop name aur owner name daalo!","#FF4444"); return; }
+  document.getElementById("reg-plan-show").textContent = window.currentSelectedPlan+" — ₹"+PA[window.currentSelectedPlan]+"/mo";
+  document.getElementById("reg-step1").style.display = "none";
+  document.getElementById("reg-step2").style.display = "";
+};
+
+window.doRegister = async () => {
+  const shop  = document.getElementById("reg-shop").value.trim();
+  const owner = document.getElementById("reg-owner").value.trim();
+  const type  = document.getElementById("reg-type").value;
+  const city  = document.getElementById("reg-city").value.trim();
+  const phone = document.getElementById("reg-phone").value.trim();
+  const email = document.getElementById("reg-email").value.trim();
+  const pass  = document.getElementById("reg-password").value;
+  const plan  = window.currentSelectedPlan;
+  const err   = document.getElementById("reg-err");
+  const btn   = document.getElementById("reg-btn");
+  err.style.display = "none";
+  if(!phone||!email||!pass){ err.textContent="Phone, email aur password daalo!"; err.style.display="block"; return; }
+  if(pass.length<6){ err.textContent="Password minimum 6 characters hona chahiye!"; err.style.display="block"; return; }
+  btn.innerHTML = '<span class="spin"></span> Account ban raha hai...'; btn.disabled = true;
+  try {
+    const cred = await createUserWithEmailAndPassword(auth, email, pass);
+    const clientData = {
+      uid: cred.user.uid, shopName:shop, ownerName:owner,
+      phone, email, plan, type, city,
+      status:"active", joined:now(), due:addD(now(),30),
+      paid:false, slug:slug(shop), trialEnd:addD(now(),30),
+      createdAt: serverTimestamp(),
+    };
+    await setDoc(doc(db,"clients",cred.user.uid), clientData);
+    toast("🎉 Account ready hai! Welcome to ReviewPro!");
+    await loadClientDash(cred.user.uid);
+  } catch(e) {
+    if(e.code==="auth/email-already-in-use") err.textContent = "Yeh email already registered hai. Login karein!";
+    else err.textContent = "Error: "+e.message;
+    err.style.display = "block";
+  }
+  btn.innerHTML = "🚀 Free Account Banayein"; btn.disabled = false;
+};
+
+// ── LOGOUT ────────────────────────────────────────────────────
+window.logout = async () => {
+  await signOut(auth);
+  showPage("page-login");
+};
+
+// ── CLIENT DASHBOARD ──────────────────────────────────────────
+async function loadClientDash(uid) {
+  showPage("page-client");
+  const snap = await getDoc(doc(db,"clients",uid));
+  if(!snap.exists()){ toast("Client data nahi mila!","#FF4444"); return; }
+  const data = snap.data();
+
+  // Load reviews
+  const revSnap = await getDocs(query(collection(db,"clients",uid,"reviews"), orderBy("createdAt","desc")));
+  const reviews = revSnap.docs.map(d=>({id:d.id,...d.data()}));
+  data.reviews = reviews;
+  window.currentClientData = data;
+
+  renderClientDash(data);
+}
+
+function renderClientDash(data) {
+  const { shopName, ownerName, plan, due, paid, slug:sl, reviews } = data;
+  document.getElementById("client-owner-name").textContent = ownerName || "Friend";
+  document.getElementById("client-shop-name-dash").textContent = shopName + " · reviewpro.app/" + (sl||"");
+  const planBadge = document.getElementById("client-plan-badge");
+  planBadge.textContent = plan; planBadge.style.background = PC[plan]+"22";
+  planBadge.style.color = PC[plan]; planBadge.style.border = "1px solid "+PC[plan]+"30";
+
+  const od = over(due) && !paid;
+  const odAlert = document.getElementById("client-overdue-alert");
+  odAlert.style.display = od ? "flex" : "none";
+
+  const ar = avgR(reviews);
+  const happy = reviews.filter(r=>r.rating>=4).length;
+  document.getElementById("client-stats").innerHTML = `
+    <div class="card fu" style="padding:16px 18px">
+      <div style="font-size:20px;margin-bottom:6px">⭐</div>
+      <div style="font-size:22px;font-weight:800;color:#FFD700;font-family:'Syne',sans-serif">${ar}</div>
+      <div style="font-size:11px;color:var(--mu);margin-top:4px">Avg Rating</div>
+    </div>
+    <div class="card fu" style="padding:16px 18px;animation-delay:60ms">
+      <div style="font-size:20px;margin-bottom:6px">💬</div>
+      <div style="font-size:22px;font-weight:800;color:#FF4500;font-family:'Syne',sans-serif">${reviews.length}</div>
+      <div style="font-size:11px;color:var(--mu);margin-top:4px">Reviews</div>
+    </div>
+    <div class="card fu" style="padding:16px 18px;animation-delay:120ms">
+      <div style="font-size:20px;margin-bottom:6px">😊</div>
+      <div style="font-size:22px;font-weight:800;color:#00C48C;font-family:'Syne',sans-serif">${happy}</div>
+      <div style="font-size:11px;color:var(--mu);margin-top:4px">Happy (4-5★)</div>
+    </div>
+    <div class="card fu" style="padding:16px 18px;animation-delay:180ms">
+      <div style="font-size:20px;margin-bottom:6px">💎</div>
+      <div style="font-size:22px;font-weight:800;color:${PC[plan]};font-family:'Syne',sans-serif">${plan}</div>
+      <div style="font-size:11px;color:var(--mu);margin-top:4px">Current Plan</div>
+    </div>`;
+
+  renderClientReviews(reviews);
+  renderClientBreakdown(reviews);
+  document.getElementById("client-footer").innerHTML = footer();
+}
+
+window.clientTab = (t) => {
+  document.querySelectorAll("#client-tabs .tab").forEach((el,i)=>{
+    el.classList.toggle("active",(i===0&&t==="reviews")||(i===1&&t==="breakdown"));
+  });
+  document.getElementById("client-reviews-tab").style.display = t==="reviews"?"":"none";
+  document.getElementById("client-breakdown-tab").style.display = t==="breakdown"?"":"none";
+};
+
+function renderClientReviews(reviews) {
+  const box = document.getElementById("client-reviews-tab");
+  if(!reviews.length){
+    box.innerHTML = `<div style="text-align:center;padding:44px 16px;color:var(--mu);background:var(--card);border-radius:13px;border:1px dashed var(--b)"><div style="font-size:34px;margin-bottom:9px">📭</div><p style="font-size:12px">Abhi koi review nahi.<br/>QR Code share karein pehla review paane ke liye!</p></div>`;
+    return;
+  }
+  box.innerHTML = reviews.map(rv=>{
+    const bc = rv.rating>=4?"#00C48C":rv.rating===3?"#FFB300":"#FF4444";
+    return `<div class="card2 hov" style="padding:13px;border-left:3px solid ${bc};margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:5px;margin-bottom:4px">
+        <div style="font-weight:700;font-size:13px;font-family:'Syne',sans-serif">${rv.name||"Anonymous"}</div>
+        <div style="display:flex;align-items:center;gap:7px;flex-shrink:0">${stars(rv.rating,11)}<span style="font-size:10px;color:var(--fa)">${rv.date||""}</span></div>
+      </div>
+      ${rv.comment?`<p style="font-size:12px;color:var(--mu);line-height:1.6;margin:0">${rv.comment}</p>`:""}
+    </div>`;
+  }).join("");
+}
+
+function renderClientBreakdown(reviews) {
+  const ar = parseFloat(avgR(reviews));
+  const dist = [5,4,3,2,1].map(s=>({s,n:reviews.filter(r=>r.rating===s).length}));
+  document.getElementById("client-breakdown-tab").innerHTML = `
+    <div class="card" style="padding:20px">
+      <div style="text-align:center;margin-bottom:20px">
+        <div style="font-size:44px;font-weight:900;color:#FFD700;line-height:1;font-family:'Syne',sans-serif">${ar}</div>
+        <div style="margin:6px 0">${stars(Math.round(ar),18)}</div>
+        <span style="font-size:11px;color:var(--mu)">${reviews.length} total reviews</span>
+      </div>
+      ${dist.map(({s,n})=>{
+        const pct = reviews.length ? n/reviews.length*100 : 0;
+        const col = s>=4?"#00C48C":s===3?"#FFB300":"#FF4444";
+        return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:9px">
+          <span style="color:var(--mu);font-size:11px;width:13px;text-align:right">${s}</span>
+          <span style="color:#FFD700;font-size:11px">★</span>
+          <div style="flex:1;background:var(--hi);border-radius:3px;height:6px;overflow:hidden">
+            <div style="width:${pct}%;height:6px;border-radius:3px;background:linear-gradient(90deg,${col},${col}88);transition:width .8s"></div>
+          </div>
+          <span style="font-size:10px;color:var(--mu);width:14px;text-align:right">${n}</span>
+        </div>`;
+      }).join("")}
+    </div>`;
+}
+
+// ── QR CODE ───────────────────────────────────────────────────
+window.showQRModal = () => {
+  const data = window.currentClientData;
+  if(!data) return;
+  const url = `https://reviewpro-app-1cda8.web.app/review/${data.slug||data.uid}`;
+  document.getElementById("qr-shop-name-label").textContent = data.shopName;
+  document.getElementById("qr-link-label").textContent = "reviewpro.app/"+data.slug;
+  const container = document.getElementById("qr-canvas-container");
+  container.innerHTML = "";
+  QRCode.toCanvas(document.createElement("canvas"), url, {
+    width:150, margin:1,
+    color:{dark:"#08081C",light:"#ffffff"}
+  }, (err, canvas) => {
+    if(!err) container.appendChild(canvas);
+  });
+  openModal("qr-modal");
+};
+
+window.downloadQR = () => {
+  const card = document.getElementById("qr-card-wrap");
+  toast("QR Card download ho raha hai...");
+  // Simple screenshot via print
+  window.print();
+};
+
+// ── REVIEW FORM ───────────────────────────────────────────────
+window.loadReviewForm = (clientData) => {
+  if(!clientData) return;
+  window.currentReviewClientId = clientData.uid || clientData.id;
+  window.currentReviewRating = 0;
+  document.getElementById("review-shop-name").textContent = clientData.shopName;
+  document.getElementById("review-step1").style.display = "";
+  document.getElementById("review-step2").style.display = "none";
+  document.getElementById("review-name").value = "";
+  document.getElementById("review-comment").value = "";
+  [1,2,3,4,5].forEach(i=>{ document.getElementById("s"+i).classList.remove("lit"); });
+  document.getElementById("rating-feedback").innerHTML = `<div style="color:var(--fa);font-size:12px">☝️ Koi bhi star pe tap karein</div>`;
+  document.getElementById("review-next-btn").style.opacity = ".4";
+  showPage("page-review");
+};
+
+const ratingMeta = {
+  1:{label:"Bad",sub:"Bahut Bura 😤",color:"#FF4444",emoji:"💔"},
+  2:{label:"Poor",sub:"Kharaab 😕",color:"#FF6B35",emoji:"😞"},
+  3:{label:"Average",sub:"Theek tha 😐",color:"#FFB300",emoji:"😐"},
+  4:{label:"Good",sub:"Achha tha! 😊",color:"#00C48C",emoji:"👍"},
+  5:{label:"Excellent",sub:"Zabardast! 🤩",color:"#FFD700",emoji:"🏆"},
+};
+
+window.setRating = (r) => {
+  window.currentReviewRating = r;
+  [1,2,3,4,5].forEach(i=>{
+    const el = document.getElementById("s"+i);
+    el.classList.toggle("lit", i<=r);
+  });
+  const m = ratingMeta[r];
+  document.getElementById("rating-feedback").innerHTML = `
+    <div class="pi" style="text-align:center;width:100%;padding:12px;border-radius:12px;background:${m.color}16;border:1.5px solid ${m.color}28">
+      <div style="font-size:26px;margin-bottom:3px">${m.emoji}</div>
+      <div style="color:${m.color};font-weight:800;font-size:17px;font-family:'Syne',sans-serif">${m.label}</div>
+      <div style="color:${m.color}BB;font-size:12px;margin-top:2px">${m.sub}</div>
+    </div>`;
+  document.getElementById("review-next-btn").style.opacity = "1";
+};
+
+window.reviewStep2 = () => {
+  if(!window.currentReviewRating) return;
+  document.getElementById("review-step1").style.display = "none";
+  document.getElementById("review-step2").style.display = "";
+};
+
+window.submitReview = async () => {
+  const rating  = window.currentReviewRating;
+  const name    = document.getElementById("review-name").value.trim() || "Anonymous";
+  const comment = document.getElementById("review-comment").value.trim();
+  const clientId = window.currentReviewClientId;
+  const btn = document.getElementById("review-submit-btn");
+  if(!rating||!clientId) return;
+  btn.innerHTML = '<span class="spin"></span> Submit ho raha hai...'; btn.disabled = true;
+  try {
+    const reviewData = { name, rating, comment, date:now(), createdAt:serverTimestamp() };
+    await addDoc(collection(db,"clients",clientId,"reviews"), reviewData);
+    // Show success page
+    document.getElementById("done-shop-name").textContent = document.getElementById("review-shop-name").textContent;
+    document.getElementById("done-stars").innerHTML = stars(rating, 22);
+    const meta = SMETA[String(rating)] || SMETA["3"];
+    const badge_el = document.getElementById("ai-rating-badge");
+    badge_el.textContent = meta.emoji+" "+meta.label;
+    badge_el.style.background = meta.color+"20"; badge_el.style.color = meta.color; badge_el.style.border = "1px solid "+meta.color+"30";
+    showPage("page-review-done");
+    loadAITips(rating, document.getElementById("review-shop-name").textContent);
+  } catch(e) {
+    toast("Error: "+e.message,"#FF4444");
+  }
+  btn.innerHTML = "Submit Karein ✓"; btn.disabled = false;
+};
+
+async function loadAITips(rating, shopName) {
+  const box = document.getElementById("ai-tips-box");
+  box.innerHTML = `<div style="display:flex;align-items:center;gap:9px;color:var(--mu);font-size:12px;padding:10px 0"><span class="spin" style="border-color:#FF450033;border-top-color:#FF4500"></span> AI tips generate ho rahi hain...</div>`;
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST", headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        model:"claude-sonnet-4-20250514", max_tokens:300,
+        messages:[{role:"user",content:`You are a warm Indian business coach speaking Hinglish.\nA customer gave ${rating}/5 stars to "${shopName}".\nWrite exactly 4 short actionable tips (each starting with an emoji, under 20 words) for the shop owner.\nNo numbering. Just emoji + tip on each line.`}]
+      })
+    });
+    const d = await res.json();
+    const txt = d?.content?.[0]?.text || FALLBACK_TIPS[String(rating)] || "";
+    box.innerHTML = txt.split("\n").filter(l=>l.trim()).map(line=>`<div style="margin-bottom:8px;animation:fadeIn .3s ease">${line}</div>`).join("");
+  } catch {
+    box.innerHTML = (FALLBACK_TIPS[String(rating)]||"").split("\n").map(l=>`<div style="margin-bottom:8px">${l}</div>`).join("");
+  }
+}
+
+// ── ADMIN PANEL ───────────────────────────────────────────────
+async function loadAdminPanel() {
+  showPage("page-admin");
+  const snap = await getDocs(collection(db,"clients"));
+  window.adminClients = snap.docs.map(d=>({uid:d.id,...d.data()}));
+
+  // For each client load review count
+  for(let c of window.adminClients) {
+    const rSnap = await getDocs(collection(db,"clients",c.uid,"reviews"));
+    c.reviewCount = rSnap.size;
+    c.reviews = rSnap.docs.map(d=>({id:d.id,...d.data()}));
+  }
+
+  renderAdminStats();
+  renderClients();
+  document.getElementById("admin-footer").innerHTML = footer();
+}
+
+function renderAdminStats() {
+  const clients = window.adminClients;
+  const active  = clients.filter(c=>c.status==="active").length;
+  const due     = clients.filter(c=>!c.paid).length;
+  const revenue = clients.filter(c=>c.paid).reduce((a,c)=>a+PA[c.plan],0);
+  document.getElementById("admin-stats").innerHTML = `
+    <div class="card fu" style="padding:16px 18px"><div style="font-size:20px;margin-bottom:6px">🏪</div><div style="font-size:22px;font-weight:800;color:#FF4500;font-family:'Syne',sans-serif">${clients.length}</div><div style="font-size:11px;color:var(--mu);margin-top:4px">Total Clients</div></div>
+    <div class="card fu" style="padding:16px 18px;animation-delay:60ms"><div style="font-size:20px;margin-bottom:6px">✅</div><div style="font-size:22px;font-weight:800;color:#00C48C;font-family:'Syne',sans-serif">${active}</div><div style="font-size:11px;color:var(--mu);margin-top:4px">Active</div></div>
+    <div class="card fu" style="padding:16px 18px;animation-delay:120ms"><div style="font-size:20px;margin-bottom:6px">⚠️</div><div style="font-size:22px;font-weight:800;color:#FFB300;font-family:'Syne',sans-serif">${due}</div><div style="font-size:11px;color:var(--mu);margin-top:4px">Due Payment</div></div>
+    <div class="card fu" style="padding:16px 18px;animation-delay:180ms"><div style="font-size:20px;margin-bottom:6px">💰</div><div style="font-size:22px;font-weight:800;color:#FFD700;font-family:'Syne',sans-serif">₹${revenue.toLocaleString()}</div><div style="font-size:11px;color:var(--mu);margin-top:4px">Revenue</div><div style="font-size:10px;color:#00C48C;margin-top:3px">this month</div></div>`;
+}
+
+window.renderClients = () => {
+  const search = document.getElementById("admin-search").value.toLowerCase();
+  const clients = window.adminClients.filter(c=>
+    (c.shopName||"").toLowerCase().includes(search)||
+    (c.ownerName||"").toLowerCase().includes(search)
+  );
+  const box = document.getElementById("admin-clients-list");
+  if(!clients.length){ box.innerHTML=`<div style="text-align:center;padding:36px;color:var(--mu);font-size:12px">Koi client nahi mila 🔍</div>`; return; }
+  box.innerHTML = clients.map(c=>`
+    <div class="card2 hov" style="padding:13px;border-color:${c.status==="inactive"?"#FF444438":"var(--bh)"};opacity:${c.status==="inactive"?.72:1}">
+      <div class="client-row">
+        <div>
+          <div style="font-weight:800;font-size:14px;font-family:'Syne',sans-serif;margin-bottom:3px">${c.shopName||"No Name"}</div>
+          <div style="color:var(--mu);font-size:11px;margin-bottom:7px">👤 ${c.ownerName||"-"} · 📞 ${c.phone||"-"}</div>
+          <div style="display:flex;gap:5px;flex-wrap:wrap">
+            ${badge(c.plan,PC[c.plan])}
+            ${badge(c.status==="active"?"● Active":"● Inactive",c.status==="active"?"#00C48C":"#FF4444")}
+            ${over(c.due)&&!c.paid?badge("OVERDUE","#FF4444"):""}
+          </div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:20px;font-weight:900;color:#FFD700;font-family:'Syne',sans-serif">${c.reviewCount||0}</div>
+          <div style="font-size:10px;color:var(--mu)">reviews</div>
+        </div>
+        <div>
+          <div style="font-size:10px;color:var(--mu);margin-bottom:5px">Due: ${c.due||"-"}</div>
+          ${c.paid ? badge("Paid ✓","#00C48C") : `<div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center">${badge("Pending","#FFB300")}<button class="btn btn-sm btn-ok" onclick="markPaid('${c.uid}')">Paid</button></div>`}
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn btn-sm" style="background:#FF450020;color:#FF4500;border:1px solid #FF450028" onclick="viewClient('${c.uid}')">View →</button>
+          <button class="btn btn-sm btn-wa" onclick="showWA('${c.uid}')">📱 WA</button>
+          <button class="btn btn-sm btn-red" onclick="toggleClient('${c.uid}')">${c.status==="active"?"🔴":"🟢"}</button>
+          <button class="btn btn-sm btn-red" onclick="confirmDel('${c.uid}','${(c.shopName||"").replace(/'/g,"\\'")}')">🗑</button>
+        </div>
+      </div>
+    </div>`).join("");
+};
+
+window.adminTab = (t) => {
+  const tabs = ["clients","payments","analytics","alerts"];
+  tabs.forEach((tab,i)=>{
+    document.getElementById("admin-"+tab+"-tab").style.display = tab===t?"":"none";
+    document.querySelectorAll("#admin-tabs .tab")[i].classList.toggle("active",tab===t);
+  });
+  if(t==="payments") renderPayments();
+  if(t==="analytics") renderAnalytics();
+  if(t==="alerts") renderAlerts();
+};
+
+function renderPayments() {
+  document.getElementById("admin-payments-tab").innerHTML = `
+    <div class="card tbl-wrap">
+      <table style="width:100%;border-collapse:collapse;min-width:460px">
+        <thead><tr style="background:var(--hi)">
+          ${["Shop","Plan","Amount","Due Date","Status",""].map(h=>`<th style="padding:11px 13px;text-align:left;font-size:10px;color:var(--mu);font-weight:700;letter-spacing:1px;text-transform:uppercase;white-space:nowrap">${h}</th>`).join("")}
+        </tr></thead>
+        <tbody>${window.adminClients.map(c=>`
+          <tr style="border-top:1px solid var(--b)">
+            <td style="padding:12px 13px"><div style="font-weight:700;font-size:13px;font-family:'Syne',sans-serif">${c.shopName}</div><div style="font-size:10px;color:var(--mu)">${c.ownerName}</div></td>
+            <td style="padding:12px 13px">${badge(c.plan,PC[c.plan])}</td>
+            <td style="padding:12px 13px;font-weight:700;color:#00C48C;font-size:13px;white-space:nowrap">₹${PA[c.plan]}/mo</td>
+            <td style="padding:12px 13px;color:${over(c.due)&&!c.paid?"#FF4444":"var(--mu)"};font-size:11px;white-space:nowrap">${c.due}</td>
+            <td style="padding:12px 13px">${badge(c.paid?"Paid":"Pending",c.paid?"#00C48C":"#FFB300")}</td>
+            <td style="padding:12px 13px">${!c.paid?`<button class="btn btn-sm btn-ok" onclick="markPaid('${c.uid}')">Mark Paid</button>`:""}</td>
+          </tr>`).join("")}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+function renderAnalytics() {
+  const clients = window.adminClients;
+  const allRevs = clients.reduce((a,c)=>a+(c.reviewCount||0),0);
+  const collected = clients.filter(c=>c.paid).reduce((a,c)=>a+PA[c.plan],0);
+  const pending = clients.filter(c=>!c.paid).reduce((a,c)=>a+PA[c.plan],0);
+  document.getElementById("admin-analytics-tab").innerHTML = `
+    <div class="two-col">
+      <div class="card" style="padding:20px">
+        <h3 style="font-family:'Syne',sans-serif;font-weight:800;font-size:14px;margin-bottom:16px">Plan Distribution</h3>
+        ${["Basic","Standard","Premium"].map(p=>{
+          const n = clients.filter(c=>c.plan===p).length;
+          const pct = clients.length ? n/clients.length*100 : 0;
+          return `<div style="margin-bottom:13px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+              <span style="font-size:12px">${p}</span>
+              <span style="font-weight:700;font-size:12px;color:${PC[p]}">${n} clients · ₹${PA[p]}/mo</span>
+            </div>
+            <div style="background:var(--hi);border-radius:3px;height:6px">
+              <div style="width:${pct}%;height:6px;border-radius:3px;background:${PC[p]};transition:width .8s"></div>
+            </div>
+          </div>`;
+        }).join("")}
+      </div>
+      <div class="card" style="padding:20px">
+        <h3 style="font-family:'Syne',sans-serif;font-weight:800;font-size:14px;margin-bottom:16px">Revenue Summary</h3>
+        ${[
+          {l:"Collected",v:"₹"+collected.toLocaleString(),col:"#00C48C"},
+          {l:"Pending",v:"₹"+pending.toLocaleString(),col:"#FFB300"},
+          {l:"Total Reviews",v:allRevs,col:"#FFD700"},
+          {l:"Avg/Client",v:(allRevs/Math.max(clients.length,1)).toFixed(1),col:"#4D9EFF"},
+        ].map(it=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--b)">
+          <span style="color:var(--mu);font-size:12px">${it.l}</span>
+          <span style="font-weight:900;font-size:18px;color:${it.col};font-family:'Syne',sans-serif">${it.v}</span>
+        </div>`).join("")}
+      </div>
+    </div>`;
+}
+
+function renderAlerts() {
+  const overdue = window.adminClients.filter(c=>over(c.due)&&!c.paid);
+  document.getElementById("admin-alerts-tab").innerHTML = `
+    <div class="card" style="padding:18px;margin-bottom:14px">
+      <h3 style="font-family:'Syne',sans-serif;font-weight:800;font-size:14px;margin-bottom:4px">🤖 System Auto-Status</h3>
+      <p style="font-size:11px;color:var(--mu);margin-bottom:14px">Yeh sab automatic hota hai</p>
+      ${[["✅","Auto Account Create","Client register kare → account + password instantly"],
+         ["📱","WhatsApp Message","Register ke baad ek click mein ready message"],
+         ["⭐","Review Notification","Real Firestore mein save"],
+         ["🤖","AI Business Tips","Har review pe real Claude AI tips"],
+         ["⚠️","Payment Tracking","Due dates dashboard mein"],
+         ["🔴","Account Toggle","Ek click mein band / chalu"],
+      ].map(([ic,lb,ds])=>`<div style="display:flex;align-items:center;gap:11px;padding:10px 0;border-bottom:1px solid var(--b)">
+        <span style="font-size:16px;flex-shrink:0">${ic}</span>
+        <div style="flex:1"><div style="font-weight:700;font-size:12px">${lb}</div><div style="font-size:10px;color:var(--mu)">${ds}</div></div>
+        ${badge("Active","#00C48C")}
+      </div>`).join("")}
+    </div>
+    ${overdue.length?`<div class="card" style="padding:18px;border:1px solid #FF444428">
+      <h3 style="font-family:'Syne',sans-serif;font-weight:800;font-size:14px;margin-bottom:12px;color:#FF4444">🚨 Overdue — Reminder Bhejo</h3>
+      ${overdue.map(c=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--b);flex-wrap:wrap;gap:7px">
+        <div><div style="font-weight:700;font-size:12px">${c.shopName}</div><div style="font-size:10px;color:#FF4444">Due: ${c.due} · ₹${PA[c.plan]}/mo</div></div>
+        <div style="display:flex;gap:7px">
+          <button class="btn btn-sm btn-wa" onclick="sendReminder('${c.uid}')">📱 Remind</button>
+          <button class="btn btn-sm btn-ok" onclick="markPaid('${c.uid}')">Mark Paid</button>
+        </div>
+      </div>`).join("")}
+    </div>`:"<div class='card' style='padding:18px;text-align:center;color:var(--mu);font-size:12px'>✅ Koi overdue client nahi!</div>"}`;
+}
+
+// ── ADMIN ACTIONS ─────────────────────────────────────────────
+window.viewClient = async (uid) => {
+  const c = window.adminClients.find(x=>x.uid===uid);
+  if(!c) return;
+  window.currentClientData = c;
+  renderClientDash(c);
+  showPage("page-client");
+};
+
+window.markPaid = async (uid) => {
+  const newDue = addD(now(),30);
+  await updateDoc(doc(db,"clients",uid),{paid:true,due:newDue});
+  const c = window.adminClients.find(x=>x.uid===uid);
+  if(c){ c.paid=true; c.due=newDue; }
+  renderClients(); renderAdminStats();
+  toast("✅ Payment marked! Next due: "+newDue);
+};
+
+window.toggleClient = async (uid) => {
+  const c = window.adminClients.find(x=>x.uid===uid);
+  if(!c) return;
+  const newStatus = c.status==="active"?"inactive":"active";
+  await updateDoc(doc(db,"clients",uid),{status:newStatus});
+  c.status = newStatus;
+  renderClients(); renderAdminStats();
+  toast(newStatus==="active"?"✅ Account Activated!":"🔴 Account Deactivated!",newStatus==="active"?"#00C48C":"#FF4444");
+};
+
+window.confirmDel = (uid, name) => {
+  window.currentDelId = uid;
+  document.getElementById("del-name").textContent = name;
+  document.getElementById("del-confirm-btn").onclick = () => doDelete(uid);
+  openModal("del-modal");
+};
+
+async function doDelete(uid) {
+  await deleteDoc(doc(db,"clients",uid));
+  window.adminClients = window.adminClients.filter(c=>c.uid!==uid);
+  closeModal("del-modal");
+  renderClients(); renderAdminStats();
+  toast("🗑 Client deleted!");
+};
+
+window.openAddModal = () => {
+  document.getElementById("add-err").style.display="none";
+  ["add-shop","add-owner","add-phone","add-email"].forEach(id=>document.getElementById(id).value="");
+  openModal("add-modal");
+};
+
+window.doAddClient = async () => {
+  const shop  = document.getElementById("add-shop").value.trim();
+  const owner = document.getElementById("add-owner").value.trim();
+  const phone = document.getElementById("add-phone").value.trim();
+  const email = document.getElementById("add-email").value.trim();
+  const plan  = document.getElementById("add-plan").value;
+  const err   = document.getElementById("add-err");
+  const btn   = document.getElementById("add-btn");
+  err.style.display="none";
+  if(!shop||!phone||!email){err.textContent="Shop name, phone aur email zaroori hai!";err.style.display="block";return;}
+  btn.innerHTML='<span class="spin"></span> Account ban raha hai...'; btn.disabled=true;
+  try {
+    // Create Firebase Auth user with temp password
+    const tempPass = "Rev@"+Date.now().toString().slice(-6);
+    const cred = await createUserWithEmailAndPassword(auth, email, tempPass);
+    const clientData = {
+      uid:cred.user.uid, shopName:shop, ownerName:owner,
+      phone, email, plan, status:"active",
+      joined:now(), due:addD(now(),30), paid:false,
+      slug:slug(shop), tempPassword:tempPass,
+      createdAt:serverTimestamp(),
+    };
+    await setDoc(doc(db,"clients",cred.user.uid), clientData);
+    clientData.reviewCount = 0; clientData.reviews = [];
+    window.adminClients.push(clientData);
+    closeModal("add-modal");
+    renderClients(); renderAdminStats();
+    // Show WA message
+    window.currentWAClient = {...clientData, password:tempPass};
+    showWAForNew(clientData, tempPass);
+    toast("✅ Client added! WA message ready hai.");
+  } catch(e) {
+    if(e.code==="auth/email-already-in-use") err.textContent="Yeh email already registered hai!";
+    else err.textContent="Error: "+e.message;
+    err.style.display="block";
+  }
+  btn.innerHTML="✓ Account Banao + WA Message Ready"; btn.disabled=false;
+};
+
+function buildWAMsg(c, pass) {
+  return `🎉 *ReviewPro Account Ready!*
+
+Namaste *${c.ownerName||c.shopName}* ji 🙏
+
+Aapka account activate ho gaya hai! ✅
+
+━━━━━━━━━━━━━━
+🌐 Login: reviewpro.app
+📧 Email: ${c.email}
+🔑 Password: ${pass||c.tempPassword||"Contact Ronak"}
+🔗 Review Link: reviewpro.app/review/${c.slug}
+━━━━━━━━━━━━━━
+
+📱 *QR Code use karne ka tarika:*
+1. Dashboard login karein
+2. QR Code download karein
+3. Print karke counter pe lagaiye
+4. Customer scan kare → review dega!
+
+⭐ Plan: *${c.plan}* — ₹${PA[c.plan]}/month
+📅 Trial: 30 din FREE!
+
+Koi sawaal? Contact karein:
+📞 *Ronak Choudhary: +91 73397 23971*
+
+_Powered by ReviewPro 🚀_`;
+}
+
+window.showWA = (uid) => {
+  const c = window.adminClients.find(x=>x.uid===uid);
+  if(!c) return;
+  showWAForNew(c, c.tempPassword||"Contact Ronak");
+};
+
+function showWAForNew(c, pass) {
+  const msg = buildWAMsg(c, pass);
+  window.waMessage = msg;
+  window.currentWAClient = c;
+  document.getElementById("wa-modal-title").textContent = "📱 "+c.shopName+" — WhatsApp";
+  document.getElementById("wa-msg-box").textContent = msg;
+  document.getElementById("wa-send-btn").onclick = () => window.open("https://wa.me/91"+c.phone+"?text="+encodeURIComponent(msg),"_blank");
+  openModal("wa-modal");
+}
+
+window.copyWA = () => {
+  navigator.clipboard?.writeText(window.waMessage);
+  toast("✅ Message copied!");
+};
+
+window.sendReminder = (uid) => {
+  const c = window.adminClients.find(x=>x.uid===uid);
+  if(!c) return;
+  const msg = `Namaste ${c.ownerName||c.shopName} ji! 🙏\n\nReviewPro subscription ka payment due ho gaya hai.\n\n💰 Plan: ${c.plan} — ₹${PA[c.plan]}/month\n📅 Due: ${c.due}\n\nPlease UPI karein:\n📱 7339723971 (Ronak Choudhary)\n\nPayment hone pe service turant resume hogi! ✅\n\n_ReviewPro_ 🚀`;
+  window.open("https://wa.me/91"+c.phone+"?text="+encodeURIComponent(msg),"_blank");
+};
+
+// ── MODAL HELPERS ─────────────────────────────────────────────
+window.openModal  = (id) => document.getElementById(id).classList.add("open");
+window.closeModal = (id) => document.getElementById(id).classList.remove("open");
+
+// ── AUTH STATE ────────────────────────────────────────────────
+onAuthStateChanged(auth, async (user) => {
+  document.getElementById("loading-screen").style.display = "none";
+  if(user) {
+    if(user.email === ADMIN_EMAIL) {
+      await loadAdminPanel();
+    } else {
+      await loadClientDash(user.uid);
+    }
+  } else {
+    showPage("page-login");
+    document.getElementById("login-footer").innerHTML = footer();
+  }
+});
+
+// ── DEMO ADMIN SETUP ──────────────────────────────────────────
+// Create admin account if not exists (first time only)
+async function ensureAdminExists() {
+  try {
+    await createUserWithEmailAndPassword(auth, ADMIN_EMAIL, ADMIN_PASS);
+  } catch(e) {
+    // Already exists — fine
+  }
+}
+ensureAdminExists();
+
+// Make functions globally available
+window.loadReviewForm = window.loadReviewForm;
+</script>
+</body>
+</html>
